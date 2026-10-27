@@ -1,0 +1,89 @@
+import java.util.InputMismatchException;
+import java.util.Scanner;
+
+// Custom exception: used when registration data is not valid
+class InvalidRegistrationException extends Exception {
+    public InvalidRegistrationException(String message) {
+        super(message);
+    }
+}
+
+public class ExamRegistration {
+
+    private String studentId;
+    private String name;
+    private int age;
+    private double examMark;
+    private int subjects;
+
+    // Collect the student's data using Scanner
+    public void collectData(Scanner input) {
+        System.out.print("Enter Student ID: ");
+        studentId = input.nextLine();
+
+        System.out.print("Enter Student Name: ");
+        name = input.nextLine();
+
+        System.out.print("Enter Age: ");
+        age = input.nextInt();
+
+        System.out.print("Enter Exam Mark: ");
+        examMark = input.nextDouble();
+
+        System.out.print("Enter Number of Subjects: ");
+        subjects = input.nextInt();
+    }
+
+    // throws tells the caller that this method may throw the exception
+    public void validate() throws InvalidRegistrationException {
+        if (studentId == null || studentId.trim().isEmpty()) {
+            // throw actually creates and throws the exception
+            throw new InvalidRegistrationException("Student ID cannot be empty");
+        }
+        if (age < 18) {
+            throw new InvalidRegistrationException("Age must be at least 18");
+        }
+        if (examMark < 0 || examMark > 100) {
+            throw new InvalidRegistrationException("Exam mark must be between 0 and 100");
+        }
+        if (subjects < 1) {
+            throw new InvalidRegistrationException("Minimum allowed subjects is 1");
+        }
+        if (subjects > 5) {
+            throw new InvalidRegistrationException("Maximum allowed subjects is 5");
+        }
+    }
+
+    public void showSuccess() {
+        System.out.println();
+        System.out.println("Registration Successful!");
+        System.out.println("Student:" + name);
+        System.out.println("Registered Subjects: " + subjects);
+    }
+
+    public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+        ExamRegistration reg = new ExamRegistration();
+
+        System.out.println("EXAM REGISTRATION SYSTEM");
+        System.out.println();
+
+        try {
+            reg.collectData(input);
+            reg.validate();
+            reg.showSuccess();
+        } catch (InvalidRegistrationException e) {
+            System.out.println();
+            System.out.println("Registration Failed!");
+            System.out.println("Error: " + e.getMessage());
+        } catch (InputMismatchException e) {
+            System.out.println();
+            System.out.println("Registration Failed!");
+            System.out.println("Error: Please enter numbers only for age, mark and subjects");
+        } finally {
+            // Always runs whether registration worked or not
+            System.out.println();
+            System.out.println("Registration attempt completed");
+        }
+    }
+}
